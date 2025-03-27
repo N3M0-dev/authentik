@@ -11,6 +11,7 @@ from authentik.flows.api.flows import FlowSerializer
 from authentik.flows.api.stages import StageSerializer
 from authentik.stages.invitation.models import Invitation, InvitationStage
 
+from rest_framework import serializers
 
 class InvitationStageSerializer(StageSerializer):
     """InvitationStage Serializer"""
@@ -48,6 +49,8 @@ class InvitationSerializer(ModelSerializer):
     created_by = GroupMemberSerializer(read_only=True)
     fixed_data = JSONDictField(required=False)
     flow_obj = FlowSerializer(read_only=True, required=False, source="flow")
+    usage_count = serializers.IntegerField(read_only=True)
+    usage_limit = serializers.IntegerField()
 
     class Meta:
         model = Invitation
@@ -58,6 +61,8 @@ class InvitationSerializer(ModelSerializer):
             "fixed_data",
             "created_by",
             "single_use",
+            "usage_count",
+            "usage_limit",
             "flow",
             "flow_obj",
         ]

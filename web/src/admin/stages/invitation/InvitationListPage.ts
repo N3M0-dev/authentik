@@ -90,6 +90,7 @@ export class InvitationListPage extends TablePage<Invitation> {
             new TableColumn(msg("Name"), "name"),
             new TableColumn(msg("Created by"), "created_by"),
             new TableColumn(msg("Expiry")),
+            new TableColumn(msg("Usage"), "usageCount"),
             new TableColumn(msg("Actions")),
         ];
     }
@@ -130,6 +131,7 @@ export class InvitationListPage extends TablePage<Invitation> {
                     : html``}`,
             html`${item.createdBy?.username}`,
             html`${item.expires?.toLocaleString() || msg("-")}`,
+            html`${this.renderUsageStatus(item)}`,
             html` <ak-forms-modal>
                     <span slot="submit"> ${msg("Update")} </span>
                     <span slot="header"> ${msg("Update Invitation")} </span>
@@ -169,6 +171,21 @@ export class InvitationListPage extends TablePage<Invitation> {
                 <ak-invitation-form slot="form"> </ak-invitation-form>
                 <button slot="trigger" class="pf-c-button pf-m-primary">${msg("Create")}</button>
             </ak-forms-modal>
+        `;
+    }
+
+    renderUsageStatus(item: Invitation): TemplateResult {
+        if (item.usageLimit === 0) {
+            return html`<span>${msg("Unlimited")}</span>`;
+        }
+        
+        const remaining = item.usageLimit - item.usageCount;
+        
+        return html`
+            <span>
+                ${remaining} ${remaining === 1 ? msg("use") : msg("uses")} ${msg("remaining")}
+                <small class="pf-u-display-block">(${msg("used")} ${item.usageCount}/${item.usageLimit})</small>
+            </span>
         `;
     }
 

@@ -59,6 +59,10 @@ class InvitationStageView(StageView):
             if stage.continue_flow_without_invitation:
                 return self.executor.stage_ok()
             return self.executor.stage_invalid(_("Invalid invite/invite not found"))
+        
+        # Check if usage limit has been reached
+        if invite.usage_limit > 0 and invite.usage_count >= invite.usage_limit:
+            return self.executor.stage_invalid(_("Invitation has reached its usage limit"))
 
         self.executor.plan.context[INVITATION_IN_EFFECT] = True
         self.executor.plan.context[INVITATION] = invite
@@ -69,7 +73,24 @@ class InvitationStageView(StageView):
         self.executor.plan.context[PLAN_CONTEXT_PROMPT] = context
 
         invitation_used.send(sender=self, request=request, invitation=invite)
+        
+        # Increment usage counter
+        invite.usage_count += 1
+        invite.save()
+        
+        # If single_use is enabled, delete regardless of quota
         if invite.single_use:
             invite.delete()
+            self.logger.debug("Deleted single-use invitation", token=str(invite.invite_uuid))
+        if invite.usage_limit > 0 and invite.usage_count >= invite.usage_limit:
+            invite.delete()
             self.logger.debug("Deleted invitation", token=str(invite.invite_uuid))
+        else:
+            self.logger.debug(
+                "Invitation used", 
+                token=str(invite.invite_uuid), 
+                count=invite.usage_count,
+                limit=invite.usage_limit
+            )
+        
         return self.executor.stage_ok()

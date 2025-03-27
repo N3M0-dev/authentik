@@ -88,12 +88,24 @@ export class InvitationForm extends ModelForm<Invitation, string> {
                     )}
                 </p>
             </ak-form-element-horizontal>
+            <ak-form-element-horizontal name="usageLimit" label=${msg("Usage limit")}>
+                <input
+                    type="number"
+                    value="${first(this.instance?.usageLimit, 0)}"
+                    class="pf-c-form-control"
+                    required
+                    min="0"
+                />
+                <p class="pf-c-form__helper-text">
+                    ${msg("Maximum number of times this invitation can be used. 0 means unlimited.")}
+                </p>
+            </ak-form-element-horizontal>
             <ak-form-element-horizontal name="singleUse">
                 <label class="pf-c-switch">
                     <input
                         class="pf-c-switch__input"
                         type="checkbox"
-                        ?checked=${first(this.instance?.singleUse, true)}
+                        ?checked=${first(this.instance?.singleUse, false)}
                     />
                     <span class="pf-c-switch__toggle">
                         <span class="pf-c-switch__toggle-icon">
@@ -103,7 +115,7 @@ export class InvitationForm extends ModelForm<Invitation, string> {
                     <span class="pf-c-switch__label">${msg("Single use")}</span>
                 </label>
                 <p class="pf-c-form__helper-text">
-                    ${msg("When enabled, the invitation will be deleted after usage.")}
+                    ${msg("When enabled, the invitation will be deleted after usage regardless of usage limit.")}
                 </p>
             </ak-form-element-horizontal>`;
     }

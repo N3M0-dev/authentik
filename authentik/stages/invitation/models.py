@@ -47,7 +47,7 @@ class InvitationStage(Stage):
 
 
 class Invitation(SerializerModel, ExpiringModel):
-    """Single-use invitation link"""
+    """Invitation link with quota"""
 
     invite_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
 
@@ -63,6 +63,16 @@ class Invitation(SerializerModel, ExpiringModel):
     single_use = models.BooleanField(
         default=False,
         help_text=_("When enabled, the invitation will be deleted after usage."),
+    )
+    
+    # Add new fields for quota management
+    usage_count = models.PositiveIntegerField(
+        default=0,
+        help_text=_("How many times this invitation has been used."),
+    )
+    usage_limit = models.PositiveIntegerField(
+        default=0,
+        help_text=_("Maximum number of times this invitation can be used. 0 means unlimited."),
     )
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
