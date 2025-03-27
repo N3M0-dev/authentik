@@ -11774,6 +11774,10 @@
                     "title": "Single use",
                     "description": "When enabled, the invitation will be deleted after usage."
                 },
+                "usage_limit": {
+                    "type": "integer",
+                    "title": "Usage limit"
+                },
                 "flow": {
                     "type": "string",
                     "format": "uuid",

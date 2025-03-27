@@ -45044,6 +45044,11 @@ components:
         single_use:
           type: boolean
           description: When enabled, the invitation will be deleted after usage.
+        usage_count:
+          type: integer
+          readOnly: true
+        usage_limit:
+          type: integer
         flow:
           type: string
           format: uuid
@@ -45058,6 +45063,8 @@ components:
       - flow_obj
       - name
       - pk
+      - usage_count
+      - usage_limit
     InvitationRequest:
       type: object
       description: Invitation Serializer
@@ -45077,6 +45084,8 @@ components:
         single_use:
           type: boolean
           description: When enabled, the invitation will be deleted after usage.
+        usage_limit:
+          type: integer
         flow:
           type: string
           format: uuid
@@ -45084,6 +45093,7 @@ components:
           description: When set, only the configured flow can use this invitation.
       required:
       - name
+      - usage_limit
     InvitationStage:
       type: object
       description: InvitationStage Serializer
@@ -50907,6 +50917,8 @@ components:
         single_use:
           type: boolean
           description: When enabled, the invitation will be deleted after usage.
+        usage_limit:
+          type: integer
         flow:
           type: string
           format: uuid
